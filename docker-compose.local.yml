@@ -43,9 +43,23 @@ services:
       - ./kafka/data:/var/lib/kafka/data
       - ./kafka/logs:/var/log/kafka
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: unless-stopped
+    networks:
+      - kafka-docker
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
 networks:
   kafka-docker:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.169.5.0/24
+        - subnet: 172.28.0.0/24

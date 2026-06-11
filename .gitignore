@@ -4,3 +4,8 @@ target/
 .vscode/
 *.log
 .env
+docker-compose.yml
+kafka/data/
+kafka/logs/
+zookeeper/data/
+zookeeper/log/

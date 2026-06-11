@@ -32,6 +32,15 @@ quarkus-kafka-demo/
 
 ### 1. Iniciar Kafka
 
+Antes de levantar los contenedores por primera vez, crear las carpetas de volúmenes y asignar permisos. El contenedor corre con `uid=1000` y necesita escritura en esas rutas:
+
+```bash
+mkdir -p ./kafka/data ./kafka/logs ./zookeeper/data ./zookeeper/log
+sudo chown -R 1000:1000 ./kafka ./zookeeper
+```
+
+Luego levantar:
+
 ```bash
 docker compose -f docker-compose.local.yml up -d
 ```
