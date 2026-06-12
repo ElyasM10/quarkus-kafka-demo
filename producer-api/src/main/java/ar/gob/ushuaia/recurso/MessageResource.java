@@ -1,5 +1,7 @@
-package ar.gob.ushuaia.producer;
+package ar.gob.ushuaia.recurso;
 
+import ar.gob.ushuaia.producer.MessageRequest;
+import ar.gob.ushuaia.producer.MessageResponse;
 import io.smallrye.reactive.messaging.kafka.Record;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;

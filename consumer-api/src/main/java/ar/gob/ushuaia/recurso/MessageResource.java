@@ -1,5 +1,7 @@
-package ar.gob.ushuaia.consumer;
+package ar.gob.ushuaia.recurso;
 
+import ar.gob.ushuaia.consumer.MessageConsumer;
+import ar.gob.ushuaia.consumer.ReceivedMessage;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

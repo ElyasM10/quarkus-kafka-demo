@@ -1,59 +1,86 @@
 # consumer-api
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Microservicio Quarkus que consume mensajes de un topic de Kafka y los expone a través de un endpoint REST.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Tecnologías
 
-## Running the application in dev mode
+- Java 17
+- Quarkus 3.27.2
+- SmallRye Reactive Messaging (Kafka)
+- Quarkus REST + Jackson
+- SmallRye OpenAPI
 
-You can run your application in dev mode that enables live coding using:
+## Requisitos previos
 
-```shell script
-./mvnw compile quarkus:dev
+- JDK 17+
+- Maven 3.8+
+- Kafka corriendo en `localhost:9092` (ver `docker-compose.yml` en la raíz del proyecto)
+
+## Configuración
+
+`src/main/resources/application.properties`:
+
+| Propiedad | Valor por defecto | Descripción |
+|---|---|---|
+| `quarkus.http.port` | `8082` | Puerto HTTP del servicio |
+| `kafka.bootstrap.servers` | `localhost:9092` | Broker de Kafka |
+| `mp.messaging.incoming.messages-in.topic` | `test-topic` | Topic que se consume |
+| `mp.messaging.incoming.messages-in.group.id` | `consumer-api-group` | Consumer group |
+| `mp.messaging.incoming.messages-in.auto.offset.reset` | `earliest` | Lee desde el inicio si no hay offset guardado |
+
+## Levantar infraestructura Kafka
+
+Desde la raíz del proyecto:
+
+```bash
+docker compose up -d
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+Esto levanta Zookeeper, Kafka y Kafka UI (`http://localhost:8080`).
 
-## Packaging and running the application
+## Ejecutar en modo desarrollo
 
-The application can be packaged using:
+```bash
+./mvnw quarkus:dev
+```
 
-```shell script
+El servicio queda disponible en `http://localhost:8082`.
+
+## Endpoints
+
+### `GET /messages`
+
+Devuelve todos los mensajes recibidos desde Kafka desde que el servicio inició.
+
+**Response `200 OK`:**
+```json
+[
+  {
+    "key": "mi-clave",
+    "payload": "contenido del mensaje",
+    "receivedAt": "2026-06-12T12:00:00Z"
+  }
+]
+```
+
+> Los mensajes se acumulan en memoria. Al reiniciar el servicio se pierden, pero con `auto.offset.reset=earliest` vuelve a consumir desde el inicio del topic.
+
+## Swagger UI
+
+Con el servicio levantado, acceder a:
+
+```
+http://localhost:8082/q/swagger-ui
+```
+
+## Build para producción
+
+```bash
+# JVM
 ./mvnw package
+java -jar target/quarkus-app/quarkus-run.jar
+
+# Nativo
+./mvnw package -Pnative
+./target/consumer-api-1.0.0-SNAPSHOT-runner
 ```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/consumer-api-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Messaging - Kafka Connector ([guide](https://quarkus.io/guides/kafka-getting-started)): Connect to Kafka with Reactive Messaging
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
