@@ -21,6 +21,7 @@ public class MessageResource {
     @Inject
     Logger log;
 
+    // Expone por HTTP los mensajes que MessageConsumer recibió de Kafka
     @GET
     public List<ReceivedMessage> list() {
         List<ReceivedMessage> messages = consumer.getMessages();

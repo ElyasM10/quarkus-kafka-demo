@@ -30,6 +30,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Extensión Quarkus SmallRye Reactive Messaging para Kafka: habilita @Channel/Emitter para producir mensajes -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-messaging-kafka</artifactId>

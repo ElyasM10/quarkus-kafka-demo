@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 @Consumes(MediaType.APPLICATION_JSON)
 public class MessageResource {
 
+    // Emitter conectado al canal "messages-out" (ver application.properties), que lo mapea al topic Kafka "test-topic"
     @Inject
     @Channel("messages-out")
     Emitter<Record<String, String>> emitter;
@@ -26,6 +27,7 @@ public class MessageResource {
     @Inject
     Logger auditor;
 
+    // Publica el mensaje recibido por POST como un Record key/value en Kafka a través del emitter
     @POST
     public Response send(MessageRequest request) {
         auditor.debugf("Request recibido — key: %s | payload: %s", request.key(), request.payload());

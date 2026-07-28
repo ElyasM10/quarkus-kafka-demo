@@ -16,6 +16,7 @@ public class MessageConsumer {
 
     private final List<ReceivedMessage> messages = new ArrayList<>();
 
+    // Escucha el canal "messages-in" (ver application.properties), mapeado al topic Kafka "test-topic", y guarda cada mensaje recibido
     @Incoming("messages-in")
     public void consume(Record<String, String> record) {
         LOG.debugf("Mensaje recibido desde Kafka — key: %s | payload: %s", record.key(), record.value());
@@ -26,6 +27,7 @@ public class MessageConsumer {
         LOG.infof("Mensaje procesado y almacenado — key: %s | total acumulado: %d", record.key(), messages.size());
     }
 
+    // Devuelve una copia inmutable de todos los mensajes acumulados desde Kafka
     public List<ReceivedMessage> getMessages() {
         LOG.debugf("Consultando mensajes acumulados — total: %d", messages.size());
         return List.copyOf(messages);
